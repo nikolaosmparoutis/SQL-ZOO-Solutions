@@ -5,7 +5,7 @@
 -- self joins for row search of same value
 -- nested self join for join with other table
 -- creation of date ranges
--- comparison of date ranges
+-- comparison of date ranges using exclusion from the upper and lower bounds.
 -- rows distinction using group by at the end (DISTINCT CASE did not produce the distinction)
 -- (the online compiler does not allow to do DDL with temporary table).
 
