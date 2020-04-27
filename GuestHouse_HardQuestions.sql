@@ -1,4 +1,4 @@
-
+https://sqlzoo.net/wiki/Guest_House_Assessment_Hard
 -- Question 11.
 -- Methods i applied from top to down:
 -- Used pivoting with case statements
