@@ -1,4 +1,5 @@
 https://sqlzoo.net/wiki/Guest_House_Assessment_Hard
+
 -- Question 11.
 -- Methods i applied from top to down:
 -- Used pivoting with case statements
@@ -68,7 +69,7 @@ GROUP BY t1.last_name
 ORDER BY t1.last_name
 
 ####################
---Question 12
+--Question 12.
 -- Hacks used to solve this:
 -- 1. To find the floor we cannot use substring_index because there is not delmiter. 
 --   room_no is an id so is an integer so if i find the number of digits in id 
