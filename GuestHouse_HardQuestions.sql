@@ -67,3 +67,34 @@ AND t1.first_name != t2.first_name
 GROUP BY t1.last_name  
 ORDER BY t1.last_name
 
+####################
+--Question 12
+-- Hacks used to solve this:
+-- 1. To find the floor we cannot use substring_index because there is not delmiter. 
+--   room_no is an id so is an integer so if i find the number of digits in id 
+--   (ex 101) = 3 digits and if i create the 100 (using zero padding with RPAD)
+--   and i do the division 101/100 = 1.01 i created the delimiter, then using 
+--   substring_index i get the first digit (floor number).
+-- 2. To pivot i used  CASE statements although without sum we get dublicates in 
+--   checkout dates and is not the the requested format so i did a trick which is like 
+--   doing WITH ROLL UP topically for each group of checkouts. 
+--   Used the SUM taking into advantage the existence of numbers and NULLS 
+--   (delete every SUM and check it)
+
+SELECT checkout,
+SUM((CASE WHEN floor = 1 THEN crooms END)) 1st_floor,
+SUM((CASE WHEN floor = 2 THEN crooms END)) 2nd_floor,
+SUM((CASE WHEN floor = 3 THEN crooms END)) 3rd_floor
+FROM
+(
+SELECT DATE_ADD(b.booking_date, INTERVAL b.nights DAY) checkout, 
+SUBSTRING_INDEX(b.room_no / RPAD('1',LENGTH(b.room_no),'0'),'.',1) floor,
+COUNT(b.room_no) crooms
+FROM booking b 
+GROUP BY floor, checkout
+HAVING checkout >= "2016-11-14"
+ORDER BY checkout
+)t
+GROUP BY checkout
+
+##################
