@@ -1,7 +1,10 @@
 https://sqlzoo.net/wiki/Guest_House_Assessment_Hard
 
 -- Question 11.
--- Methods i applied from top to down:
+-- Coincidence. Have two guests with the same surname ever stayed in the hotel on the evening? 
+-- Show the last name and both first names. Do not include duplicates.
+
+-- **Methods i applied from top to down:**
 -- Used pivoting with case statements
 -- self joins for row search of same value
 -- nested self join for join with other table
@@ -70,7 +73,11 @@ ORDER BY t1.last_name
 
 ####################
 --Question 12.
--- Hacks used to solve this:
+--Check out per floor. The first digit of the room number indicates the floor – e.g. 
+--room 201 is on the 2nd floor. For each day of the week beginning 2016-11-14 show
+--how many rooms are being vacated that day by floor number. Show all days in the correct order.
+
+-- **Hacks used to solve this:**
 -- 1. To find the floor we cannot use substring_index because there is not delmiter. 
 --   room_no is an id so is an integer so if i find the number of digits in id 
 --   (ex 101) = 3 digits and if i create the 100 (using zero padding with RPAD)
@@ -99,3 +106,21 @@ ORDER BY checkout
 GROUP BY checkout
 
 ####################
+
+--Question 13. 
+--Free rooms? List the rooms that are free on the day 25th Nov 2016.
+
+-- Main idea: find the used rooms with time range inside the target date and exclude them from the total rooms table. 
+-- A second solution is using LEFT JOIN
+-- ...room LEFT JOIN (SELECT b.room_no FROM booking b WHERE same as below)t ON ..ids.. WHERE t.room_no IS NULL
+-- to get the difference between the two tables with respect to the first table: like (A-B) where A ⊇ B 
+SELECT r.id
+FROM room r
+EXCEPT
+SELECT r.id
+FROM room r
+JOIN booking b
+ON(b.room_no = r.id)
+WHERE b.booking_date <= '2016-11-25' AND
+DATE_ADD(b.booking_date,INTERVAL b.nights DAY) 
+   > '2016-11-25'
