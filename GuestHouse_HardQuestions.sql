@@ -124,3 +124,43 @@ ON(b.room_no = r.id)
 WHERE b.booking_date <= '2016-11-25' AND
 DATE_ADD(b.booking_date,INTERVAL b.nights DAY) 
    > '2016-11-25'
+   
+ -- Question 14.
+ --Single room for three nights required. 
+ --A customer wants a single room for three consecutive nights. Find the first available date in December 2016.
+ 
+ --Strategy:
+ -- We cannot use EXCEPT because we have to provide more columns to a user than the available columns in room table 
+ -- so we use LEFT JOIN,  LEAD with PARTITION BY ID to find the next afailable date for each room ID after the checkout for this room id
+ -- We examine the cASE if the dirrerence if next booking - last checkout > 3 or if there is not next booking date 
+ -- so the room is free we get the first available room id and other usefull infos 
+ 
+SELECT ttt.free_room, ttt.checkout, closest_booking, ttt.room_type
+FROM
+(
+SELECT tt.id, tt.room_type, tt.booking_date, tt.closest_booking, tt.checkout
+,(CASE WHEN TIMESTAMPDIFF(DAY,tt.checkout,tt.closest_booking) > 3 OR tt.closest_booking IS NULL THEN tt.id END)free_room
+FROM
+(
+SELECT r.id, r.room_type, t.booking_date, t.closest_booking, t.checkout
+FROM room r
+LEFT JOIN 
+(
+SELECT b.room_no, b.room_type_requested, b.booking_date, DATE_ADD(b.booking_date, INTERVAL b.nights DAY) checkout, 
+        LEAD(b.booking_date, 1) OVER (
+        PARTITION BY b.room_no
+        ORDER BY b.booking_date
+        ) closest_booking
+FROM room r JOIN booking b 
+ON (r.id = b.room_no)
+WHERE YEAR(b.booking_date) = '2016' AND MONTH(b.booking_date) = '12' AND b.room_type_requested = 'single'
+ORDER BY b.booking_date
+)t
+ON (r.id = t.room_no)
+WHERE t.room_no IS NOT NULL
+ORDER BY t.booking_date
+)tt
+)ttt
+WHERE ttt.free_room IS NOT NULL
+ORDER BY ttt.booking_date ASC
+LIMIT 1
