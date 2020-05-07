@@ -106,7 +106,6 @@ ORDER BY checkout
 GROUP BY checkout
 
 ####################
-
 --Question 13. 
 --Free rooms? List the rooms that are free on the day 25th Nov 2016.
 
@@ -125,6 +124,7 @@ WHERE b.booking_date <= '2016-11-25' AND
 DATE_ADD(b.booking_date,INTERVAL b.nights DAY) 
    > '2016-11-25'
    
+  #################### 
  -- Question 14.
  --Single room for three nights required. 
  --A customer wants a single room for three consecutive nights. Find the first available date in December 2016.
