@@ -129,11 +129,11 @@ DATE_ADD(b.booking_date,INTERVAL b.nights DAY)
  --Single room for three nights required. 
  --A customer wants a single room for three consecutive nights. Find the first available date in December 2016.
  
- --Strategy:
+ -- Main strategy step by step:
  -- We cannot use EXCEPT because we have to provide more columns to a user than the available columns in room table 
  -- so we use LEFT JOIN,  LEAD with PARTITION BY ID to find the next afailable date for each room ID after the checkout for this room id
- -- We examine the cASE if the dirrerence if next booking - last checkout > 3 or if there is not next booking date 
- -- so the room is free we get the first available room id and other usefull infos 
+ -- We examine the cASE if the dirrerence next booking - last checkout > 3 or if there is not next booking date 
+ -- so the room is free, then we get the first available room id and the rest usefull info 
  
 SELECT ttt.free_room, ttt.checkout, closest_booking, ttt.room_type
 FROM
