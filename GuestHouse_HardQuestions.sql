@@ -113,6 +113,7 @@ GROUP BY checkout
 -- A second solution is using LEFT JOIN
 -- ...room LEFT JOIN (SELECT b.room_no FROM booking b WHERE same as below)t ON ..ids.. WHERE t.room_no IS NULL
 -- to get the difference between the two tables with respect to the first table: like (A-B) where A ⊇ B 
+
 SELECT r.id
 FROM room r
 EXCEPT
