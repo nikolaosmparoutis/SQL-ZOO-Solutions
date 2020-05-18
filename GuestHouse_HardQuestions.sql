@@ -165,3 +165,9 @@ ORDER BY t.booking_date
 WHERE ttt.free_room IS NOT NULL
 ORDER BY ttt.booking_date ASC
 LIMIT 1
+
+#################### 
+-- Question 15.
+-- Their Database is obsolete or fault and does not support the MAKEDATE, DAYOFWEEK, DAYNAME as a proper MySQL DB or MariaDB 
+-- to solve this problem. 
+ 
