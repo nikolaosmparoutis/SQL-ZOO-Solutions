@@ -1,0 +1,50 @@
+-- get equal samples for each customer, to create the raw total dataset (training_val_test) for the model, 
+-- because each customer has diff products and the model is generic as a first PoC  
+SELECT text, sentiment
+FROM -- get equal samples for each customer
+    (SELECT  ROW_NUMBER() OVER(PARTITION BY customer) AS row_number_groupings, id, channel, text, sentiment, customer
+    FROM ( --COUNT uniquebased on text
+        SELECT  ROW_NUMBER() OVER(PARTITION BY text ORDER BY text) AS row_number, id, channel, text, sentiment, createdate, customer
+          FROM (
+                   -- BUSINESS LOGIC PLACEHOLDER END
+                    
+                    (SELECT  DISTINCT(id), channel, regexp_replace(text, 'RT @.*?:|http.*?\s|http.*\s*$', '') as  text, sentiment, createdate, 'nestle' as  customer
+                        FROM "mondelez_2022"."zero_nf_data"
+                        WHERE channel in ('twitter', 'facebook', 'instagram', 'youtube')
+                          and not text = ''
+                          and not text = ' '
+                          and not text is NULL
+                          and not sentiment is NULL
+                          ORDER BY createdate
+                          )
+                          UNION
+                    (SELECT  DISTINCT(id), channel, regexp_replace(text, 'RT @.*?:|http.*?\s|http.*\s*$', '') as  text, sentiment, createdate, 'loreal' as loreal
+                          FROM "loreal_2021"."zero_nf_data"
+                          WHERE channel in ('twitter', 'facebook', 'instagram', 'youtube')
+                            and not text = ''
+                            and not text is NULL
+                            and not sentiment is NULL
+                            ORDER BY createdate
+                            )
+                        UNION
+                    (SELECT  DISTINCT(id), channel, regexp_replace(text, 'RT @.*?:|http.*?\s|http.*\s*$', '') as  text, sentiment, createdate, 'cosmote' as cosmote
+                            FROM  "telecommunications_2022"."zero_nf_data"
+                            WHERE channel NOT in ('twitter', 'facebook', 'instagram', 'youtube')
+                            and not text = ''
+                            and not text is NULL
+                            and not sentiment is NULL
+                            ORDER BY createdate
+                          )
+                        -- BUSINESS LOGIC PLACEHOLDER END
+                  )
+                ) AS part
+    WHERE part.row_number = 1
+      AND createdate between date ('2022-01-01') AND date ('2022-03-01')
+      ORDER BY createdate
+     )
+    WHERE  row_number_groupings <= 500
+    -- GROUP BY customer
+    
+
+
+  
